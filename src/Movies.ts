@@ -18,7 +18,7 @@ export default class Movies {
 
         let searchQuery = `?apikey=${api.key}&s=${title}&type=movie`;
 
-        if (year) {
+        if (!!title.length && !!year) {
             info(`Search for movies only from year ${year}.`);
             searchQuery += `&y=${year}`;
         }

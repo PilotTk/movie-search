@@ -3,7 +3,6 @@ import Movies, { moviesAjax } from './Movies';
 import { api } from './Config';
 import axios from 'axios';
 
-
 export interface IMovie {
     Title: string,
     imdbId: string,
@@ -27,29 +26,40 @@ const searchButton = document.getElementById('search-button');
 const searchTitle = document.getElementById('search-title');
 const searchYear = document.getElementById('search-year');
 
+let handleTimeout;
+
+function invokeTimeout(title: string, year?: string) {
+    handleTimeout = window.setTimeout(function() { 
+        updateSearchResults(title, year) 
+    }, 300);
+}
+
 searchButton.addEventListener('click', () => {
-    const searchByTitle = (searchTitle as HTMLInputElement).value;
-    const searchByYear = (searchYear as HTMLInputElement)?.value;
-    updateSearchResults(searchByTitle, searchByYear);
+    const inputTitle = (searchTitle as HTMLInputElement).value;
+    const inputYear = (searchYear as HTMLInputElement)?.value;
+    if(!!inputTitle.length) {
+        updateSearchResults(inputTitle, inputYear) 
+    } else {
+        displayError('Please enter a title keyword')
+    }
 });
 
-// Add listener to search boxes
+// Add listeners to search boxes
 searchTitle.addEventListener('keyup', () => {
-    const input = (searchTitle as HTMLInputElement).value;
-    if(input.length >= 3) {
-        setTimeout(function() { 
-            updateSearchResults(input) 
-        }, 300);
+    const inputTitle = (searchTitle as HTMLInputElement).value;
+    window.clearTimeout(handleTimeout);
+    if(inputTitle.length >= 3) {
+        invokeTimeout(inputTitle);
     }
 })
 
 searchYear.addEventListener('keyup', () => {
     const inputTitle = (searchTitle as HTMLInputElement).value;
-    const inputYear = (searchYear as HTMLInputElement).value;
+    const inputYear = (searchYear as HTMLInputElement)?.value;
+
+    window.clearTimeout(handleTimeout);
     if(inputYear.length >= 3 && inputTitle.length >= 3) {
-        setTimeout(function() { 
-            updateSearchResults(inputTitle, inputYear) 
-        }, 300);
+        invokeTimeout(inputTitle, inputYear);
     }
 })
 
@@ -73,25 +83,24 @@ const removeOldResults = () => {
 const getMovieList = async (keyword: string, year?: string) => {
 
     const isSearchCached: boolean = !!searchPhraseCache.find( (s: string) => s.toUpperCase() === keyword.toUpperCase());
-    const isSearchByYear: boolean = !!year && filterMovies(keyword, year).length < 10;
+    const isSearchByYear: boolean = !!keyword && !!year && filterMovies(keyword, year).length < 10;
 
-    if( !isSearchCached || isSearchByYear ) {
+    if( (!isSearchCached || isSearchByYear ) && !!keyword) {
+        if(!isSearchCached) {
+            searchPhraseCache.push(keyword);
+        }
         try {
             movieResultCache = [].concat(...movieResultCache, await movies.search(keyword, year));
-            
-            if(!isSearchCached) {
-                searchPhraseCache.push(keyword);
-            }
         } catch (error) {
             displayError(error);
         }
-    }
+    } 
     return
 }
 
 const filterMovies = (keyword: string, year?: string) => {
 
-    const regex = new RegExp(`\\.?${keyword}\\.?`, 'i')
+    const regex = new RegExp(`${keyword}`, 'i')
 
     return movieResultCache.filter( ({Title, Year}) => !!year
         ? year === Year && regex.test(Title)
