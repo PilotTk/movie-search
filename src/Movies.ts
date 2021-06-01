@@ -3,7 +3,7 @@ import Error from './Error';
 import { api } from './Config';
 import { info } from './Log';
 
-const moviesAjax = axios.create({
+export const moviesAjax = axios.create({
     baseURL: api.baseUrl
 });
 
@@ -13,10 +13,10 @@ export default class Movies {
     }
 
     // Search for a movie from API by its title.
-    async search(title = '', year?) {
+    async search(title = '', year?: string) {
         info(`Search for "${title}" from Movies API.`);
 
-        let searchQuery = `?apikey=${api.key}&s=${title}`;
+        let searchQuery = `?apikey=${api.key}&s=${title}&type=movie`;
 
         if (year) {
             info(`Search for movies only from year ${year}.`);
@@ -27,7 +27,6 @@ export default class Movies {
         if (data.Error) {
             throw data.Error;
         }
-
         return data.Search;
     }
 }
