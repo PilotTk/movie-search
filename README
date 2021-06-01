@@ -1,0 +1,18 @@
+# Movie search
+Small test exercise for TeliaTV.
+
+## Requirements
+For development, you will only need NodeJS (https://nodejs.org/en/) installed in your environment.
+Tested with NodeJS version v12.13.0.
+
+## Setup
+- Install Node packages with the following command in project root: `npm install`.
+- Start development server with `npm start` command.
+- Application can be opened from http://localhost:8080
+
+## Configuration
+Configuration is in src/Config.ts file.
+OMDB API is used for the application. In Config.ts there is one API key provided already which is limited to 1000 requests per day.
+Should you need more requests, then a new key can be generated at http://www.omdbapi.com/apikey.aspx.
+
+Feel free to refactor existing code as you see fit. Good luck!
