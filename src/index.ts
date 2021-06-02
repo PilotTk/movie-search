@@ -21,11 +21,11 @@ const resultsContainer = document.getElementById('search-results');
 const detailsContainer = document.getElementById('movie-details');
 const errorContainer = document.getElementById('error');
 
-// Add listener to search button
 const searchButton = document.getElementById('search-button');
 const searchTitle = document.getElementById('search-title');
 const searchYear = document.getElementById('search-year');
 
+// Use handle to reset timeout
 let handleTimeout;
 
 function invokeTimeout(title: string, year?: string) {
@@ -34,6 +34,7 @@ function invokeTimeout(title: string, year?: string) {
     }, 300);
 }
 
+// Add listener to search button
 searchButton.addEventListener('click', () => {
     const inputTitle = (searchTitle as HTMLInputElement).value;
     const inputYear = (searchYear as HTMLInputElement)?.value;
@@ -71,10 +72,16 @@ const displayError = (message: string) => {
     }, 3000);
 };
 
+// Clear results list and details
 const removeOldResults = () => {
     if(resultsContainer.hasChildNodes) {
         while(!!resultsContainer.firstChild) {
             resultsContainer.removeChild(resultsContainer.firstChild);
+        }
+    }
+    if(detailsContainer.hasChildNodes) {
+        while(!!detailsContainer.firstChild) {
+            detailsContainer.removeChild(detailsContainer.firstChild);
         }
     }
     return;
